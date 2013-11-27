@@ -3,9 +3,14 @@
 node_modules/*
 node_modules/
 
+# Local logs folder #
+#####################
+logs/*
+logs/
 
 # OS generated files #
 ######################
 .DS_Store
 .DS_Store?
+scrumptious.sublime-project
 scrumptious.sublime-workspace

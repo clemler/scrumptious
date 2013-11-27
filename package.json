@@ -1,12 +1,26 @@
 {
-  "name": "application-name",
+  "name": "scrumptious",
   "version": "0.0.1",
+  "description": "Node based application for managing Scrum projects",
+  "author": "Chris Lemler <chris@lemler.org>",
   "private": true,
+  "license": "MIT",
+  "keywords": [
+    "scrum",
+    "agile",
+    "sprint",
+    "planning"
+  ],
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
     "express": "3.4.4",
-    "jade": "*"
+    "jade": "*",
+    "winston": "0.7.x",
+    "mongodb": "1.3.x"
+  },
+  "devDependencies": {
+    "jasmine-node": "1.11.x"
   }
 }
