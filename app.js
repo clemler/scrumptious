@@ -8,9 +8,12 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var MongoClient = require('mongodb').MongoClient // Driver for connecting to MongoDB
 var logger = require('./lib/logger');
+var StoriesDAO = require('./lib/stories');
 
 logger.info("The logger is working");
+var stories = new StoriesDAO(null);
 
 var app = express();
 

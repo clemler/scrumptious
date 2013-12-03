@@ -24,17 +24,16 @@
 
  var MongoClient = require('mongodb').MongoClient // Driver for connecting to MongoDB
  var Server = require('mongodb').Server;
- var StoriesDAO = require('../lib/stories');
+ var StoriesDAO = require("../lib/stories");
  var logger = require('../lib/logger');
 
- logger.error('StoriesDAO-->', StoriesDAO);
 
 // Tests that exercise the StoriesDAO object that manages Scrum stories
 describe("StoriesDAO", function() {
     var dbServer = new Server('localhost', 27017);
     var mongoClient = new MongoClient(dbServer);
     var db = null;
-    var storiesDAO;
+    var storiesDAO = null;
 
     // Initialize MongoDB Connection before each test
     beforeEach(function(done) {
@@ -56,7 +55,7 @@ describe("StoriesDAO", function() {
 
     it("should insert a new story", function testInsertStory(done) {
         logger.info("Executing: insert a new story");
-        //var stories = new StoriesDAO(db);
+
         var story = {
             title: "My test story",
             description: "A really complex story that requires a month",
@@ -72,8 +71,12 @@ describe("StoriesDAO", function() {
     // Tear-down the MongoDB Connection after each test
     afterEach(function(done) {
         logger.info("Entered mongoClient.close()");
-        mongoClient.close();
-        done();
+        mongoClient.close(function(err, rc) {
+            if (err) throw err;
+
+            db = null;
+            done();
+        });
     });
 
 });
