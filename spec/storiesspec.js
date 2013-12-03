@@ -55,15 +55,17 @@ describe("StoriesDAO", function() {
 
     it("should insert a new story", function testInsertStory(done) {
         logger.info("Executing: insert a new story");
+        var title = "My test story",
+            description = "A really complex story that requires a month",
+            points = 21;
 
-        var story = {
-            title: "My test story",
-            description: "A really complex story that requires a month",
-            points: 21
-        };
+        storiesDAO.insertStory( title, description, points, function(err, result) {
+            if (err) throw err;
 
-        storiesDAO.insertStory("My title", "My story description", 21, function(err, result) {
-            expect(story).toEqual(result);
+            logger.info("Inserted story: ", result);
+            expect(title).toEqual(result[0].title);
+            expect(description).toEqual(result[0].description);
+            expect(points).toEqual(result[0].points);
             done();
         });
     });
