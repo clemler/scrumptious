@@ -34,6 +34,7 @@ describe("StoriesDAO", function() {
     var mongoClient = new MongoClient(dbServer);
     var db = null;
     var storiesDAO = null;
+    var MSG = null;
 
     // Initialize MongoDB Connection before each test
     beforeEach(function(done) {
@@ -44,6 +45,7 @@ describe("StoriesDAO", function() {
             debugger;
             db = client.db("scrumptious");
             storiesDAO = new StoriesDAO(db);
+            MSG = storiesDAO.getMessageCatalog();
             done();
         })
     });
@@ -69,6 +71,51 @@ describe("StoriesDAO", function() {
             done();
         });
     });
+
+     /**
+      * Verify that StoriesDAO checks for an empty title
+      */
+     it("should require a non-empty title", function(done) {
+        logger.info("Executing: insert story with title validation");
+        var title = "",
+            description = "A really complex story that requires a month",
+            points = 21;
+
+        storiesDAO.insertStory( title, description, points, function(err, result) {
+            logger.info("title validation: ", err);
+            expect(err.length).toEqual(1);
+            expect(err[0]).toEqual(MSG.TITLE_MISSING);
+
+            //logger.info("Inserted story: ", result);
+            //expect(title).toEqual(result[0].title);
+            //expect(description).toEqual(result[0].description);
+            //expect(points).toEqual(result[0].points);
+            done();
+        });
+    });
+
+
+    /**
+      * Verify that StoriesDAO checks for the MAX title length
+      */
+     it("a title must be less than 80 characters", function(done) {
+        logger.info("Executing: insert story with title validation");
+        var title = "Validates the story object prior to performing MogoDB operations. Returns an array of error messages if there are errors, otherwise the function returns an empty array.",
+            description = "A really complex story that requires a month",
+            points = 21;
+
+        storiesDAO.insertStory( title, description, points, function(err, result) {
+            logger.info("title validation: ", err);
+            expect(err.length).toEqual(1);
+            expect(err[0]).toEqual(MSG.TITLE_TOO_LONG);
+
+            //logger.info("Inserted story: ", result);
+            //expect(title).toEqual(result[0].title);
+            //expect(description).toEqual(result[0].description);
+            //expect(points).toEqual(result[0].points);
+            done();
+        });
+    }); 
 
     // Tear-down the MongoDB Connection after each test
     afterEach(function(done) {
