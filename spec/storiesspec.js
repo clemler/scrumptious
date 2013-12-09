@@ -38,6 +38,17 @@ describe("StoriesDAO", function() {
 
     // Initialize MongoDB Connection before each test
     beforeEach(function(done) {
+        
+        // Define a new Matcher to test for integers
+        this.addMatchers({
+            isInteger: function(expected) {
+                var actual = this.actual;
+                return actual != "" && !isNaN(actual) && Math.round(actual) == actual;
+            }
+
+        });
+
+        // Open the MongoDB connection
         mongoClient.open(function(err, client) {
             if (err) throw err;
 
@@ -47,13 +58,9 @@ describe("StoriesDAO", function() {
             storiesDAO = new StoriesDAO(db);
             MSG = storiesDAO.getMessageCatalog();
             done();
-        })
+        });
     });
 
-    it("should pass", function() {
-        logger.info("Executing TEST");
-        expect('6').toBe('6');
-    });
 
     it("should insert a new story", function testInsertStory(done) {
         logger.info("Executing: insert a new story");
@@ -82,14 +89,8 @@ describe("StoriesDAO", function() {
             points = 21;
 
         storiesDAO.insertStory( title, description, points, function(err, result) {
-            logger.info("title validation: ", err);
             expect(err.length).toEqual(1);
             expect(err[0]).toEqual(MSG.TITLE_MISSING);
-
-            //logger.info("Inserted story: ", result);
-            //expect(title).toEqual(result[0].title);
-            //expect(description).toEqual(result[0].description);
-            //expect(points).toEqual(result[0].points);
             done();
         });
     });
@@ -98,24 +99,64 @@ describe("StoriesDAO", function() {
     /**
       * Verify that StoriesDAO checks for the MAX title length
       */
-     it("a title must be less than 80 characters", function(done) {
+     it("should verify a title is less than 80 characters", function(done) {
         logger.info("Executing: insert story with title validation");
         var title = "Validates the story object prior to performing MogoDB operations. Returns an array of error messages if there are errors, otherwise the function returns an empty array.",
             description = "A really complex story that requires a month",
             points = 21;
 
         storiesDAO.insertStory( title, description, points, function(err, result) {
-            logger.info("title validation: ", err);
             expect(err.length).toEqual(1);
             expect(err[0]).toEqual(MSG.TITLE_TOO_LONG);
-
-            //logger.info("Inserted story: ", result);
-            //expect(title).toEqual(result[0].title);
-            //expect(description).toEqual(result[0].description);
-            //expect(points).toEqual(result[0].points);
             done();
         });
     }); 
+
+    /**
+     * Verify that StoriesDAO checks that 'points' is an integer
+     */
+    it("should verify that story points is an integer", function(done) {
+        logger.info("Executing: insert story with points validation");
+        var title = "Validates the story object prior to performing MogoDB operations.",
+            description = "A really complex story that requires a month",
+            points = "seven";
+
+        storiesDAO.insertStory( title, description, points, function(err, result) {
+            expect(err.length).toEqual(1);
+            expect(err[0]).toEqual(MSG.POINTS_INVALID);
+            done();
+        });
+    });
+
+    /**
+     * Verify that StoriesDAO checks that 'points' is greater than 0
+     */
+    it("should verify that story points is an integer >= 0", function(done) {
+        var title = "Validates the story object prior to performing MogoDB operations.",
+            description = "A really complex story that requires a month",
+            points = "-1";
+
+        storiesDAO.insertStory( title, description, points, function(err, result) {
+            expect(err.length).toEqual(1);
+            expect(err[0]).toEqual(MSG.POINTS_INVALID);
+            done();
+        });
+    });
+
+    /**
+     * Verify that StoriesDAO checks that 'points' is less than 89
+     */
+    it("should verify that story points is an integer <= 89", function(done) {
+        var title = "Validates the story object prior to performing MogoDB operations.",
+            description = "A really complex story that requires a month",
+            points = "90";
+
+        storiesDAO.insertStory( title, description, points, function(err, result) {
+            expect(err.length).toEqual(1);
+            expect(err[0]).toEqual(MSG.POINTS_INVALID);
+            done();
+        });
+    });
 
     // Tear-down the MongoDB Connection after each test
     afterEach(function(done) {
