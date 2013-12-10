@@ -26,8 +26,8 @@ Each project will contain its associated stories and sprints, as well as metrics
 
 ```javascript
 { 
-    name: <project_name>,
-    description: <project description>,
+    name: "Project name (<= 80 characters)",
+    description: "Project description (<= 1024 characters)",
     stories: [
         {title, description, status, points, owner}
     ],
@@ -39,7 +39,27 @@ Each project will contain its associated stories and sprints, as well as metrics
 ```
 
 #### Stories
-stories / epics - backlog of items. Could be issues, stories, or an epic ( which contains nested stories)
+Each story captures a single user facing feature. It is envisioned that a story will have the following lifecycle:
+
+* Story is entered into the system, with initial status of `To Do`.
+* The story is assigned to a sprint, and assigned an owner.
+* When work on the story begins, it should be changed to the `In Progress` state.
+* When work is complete, the story enters `In Review`. During this time code reviews, UI reviews etc. will take place.
+* When all work is finished, the story is marked `Done`.
+* The story is marked `Accepted` when the customer has seen the functionality and approved of the functionality.
+
+Each story is modeled as follows:
+
+```javascript
+{
+title: "Title of the story (<= 80 chars)",
+description: "Detailed description of the story (<= 1024 chars)",
+status: "[Todo, In Progress, In Review, Done, Accepted]",
+points: 0, //"Whole number between 0 and 89"
+owner: "Name of user that accepted the story",
+sprint: "reference to the sprint the story is assigned to, or null"
+}
+```
 
 #### Sprints
 A collection of stories and a duration (start, ends, capacity etc)

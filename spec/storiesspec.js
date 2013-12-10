@@ -158,6 +158,22 @@ describe("StoriesDAO", function() {
         });
     });
 
+     /**
+     * Verify that StoriesDAO checks that 'points' is less than 89
+     */
+    it("should return an array of open stories", function(done) {
+
+        storiesDAO.getOpenStories(function(err, results) {
+            logger.error("Entered get stories test case");
+            expect(err.length).toEqual(0);
+            //logger.info("Results type: ", typeof(results));
+            //logger.info(results);
+            expect(results[0].status).toEqual("Todo");
+            done();
+        });
+    });
+
+
     // Tear-down the MongoDB Connection after each test
     afterEach(function(done) {
         logger.info("Entered mongoClient.close()");
